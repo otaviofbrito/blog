@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,6 +58,53 @@ public class UserServiceTest {
                 service.findById(2));
     }
 
-    // TODO: Implement test cases for getAllUsers
+    @Test
+    @DisplayName("#getAllUsers > When no user is found > return empty list")
+    void getAllUsersWhenNoUserIsFoundReturnEmptyList(){
+        when(repository.findAll()).thenReturn(new ArrayList<>());
+        List<User> userList = service.getAllUsers();
+        assertEquals(0, userList.size());
+    }
+
+    @Test
+    @DisplayName("getAllUsers > When at least one user is found > return a list of users")
+    void getAllUsersWhenUserIsFoundReturnList(){
+        when(repository.findAll()).thenReturn(new ArrayList<>(){
+            {
+                add(new User(1, "Fake User", "fakeuser", "fakeuser@email.com",
+                        "12345", null , null));
+            }
+        });
+
+        List<User> userList = service.getAllUsers();
+        assertAll(
+                () -> {assertEquals(1, userList.size());},
+                () -> {assertEquals(1, userList.get(0).getId());}
+        );
+
+    }
+
+    @Test
+    @DisplayName("getAllUsers > When more than one user are found > return a list of users")
+    void getAllUsersWhenMoreThanOneAreFoundReturnList(){
+        when(repository.findAll()).thenReturn(new ArrayList<>(){
+            {
+                add(new User(1, "Fake User", "fakeuser", "fakeuser@email.com",
+                        "12345", null , null));
+                add(new User(55, "Fake User2", "fakeuser2", "fakeuser2@email.com",
+                        "556677", null , null));
+            }
+        });
+
+        List<User> userList = service.getAllUsers();
+        assertAll(
+                () -> {assertEquals(2, userList.size());},
+                () -> {assertEquals(1, userList.get(0).getId());},
+                () -> {assertEquals(55, userList.get(1).getId());},
+                () -> {assertEquals("fakeuser", userList.get(0).getUsername());},
+                () -> {assertEquals("fakeuser2", userList.get(1).getUsername());}
+        );
+
+    }
 
 }
