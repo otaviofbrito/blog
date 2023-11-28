@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +26,7 @@ public class Post implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // TODO: Add a list of comments
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments;
 
 }
